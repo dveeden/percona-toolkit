@@ -4837,6 +4837,11 @@ sub wait {
    my $worst;  # most lagging slave
    my $pr_callback;
    my $pr_first_report;
+
+   if ( defined $self->{get_slaves_cb} ) {
+      $slaves = $self->{get_slaves_cb}();
+   }
+
    if ( $pr ) {
       $pr_callback = sub {
          my ($fraction, $elapsed, $remaining, $eta, $completed) = @_;
@@ -8510,11 +8515,12 @@ sub main {
       }
 
       $replica_lag = new ReplicaLagWaiter(
-         slaves   => $slave_lag_cxns,
-         max_lag  => $o->get('max-lag'),
-         oktorun  => sub { return $oktorun },
-         get_lag  => $get_lag,
-         sleep    => $sleep,
+         slaves        => $slave_lag_cxns,
+         get_slaves_cb => sub { return $ms->get_slaves(…) },
+         max_lag       => $o->get('max-lag'),
+         oktorun       => sub { return $oktorun },
+         get_lag       => $get_lag,
+         sleep         => $sleep,
       );
 
       my $get_status;

@@ -80,6 +80,11 @@ sub wait {
    my $worst;  # most lagging slave
    my $pr_callback;
    my $pr_first_report;
+
+   if ( defined $self->{get_slaves_cb} ) {
+      $slaves = $self->{get_slaves_cb}();
+   }
+
    if ( $pr ) {
       # If you use the default Progress report callback, you'll need to
       # to add Transformers.pm to this tool.
